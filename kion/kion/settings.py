@@ -1,9 +1,15 @@
+import os
+
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-%31&$do=f4asng1=+#nb=ks#rpmnp@6rx=i!lxh+*fq3u_y@we'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
@@ -49,8 +55,12 @@ WSGI_APPLICATION = 'kion.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'NAME': os.getenv('DB_NAME')
     }
 }
 
@@ -80,3 +90,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CELERY_BROKER_URL = 'amqp://${RB_DEFAULT_USER}:${RB_DEFAULT_PASS}@rabbitmq:5672//'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = 'amqp://user:pass@rabbitmq:5672//'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_TIMEZONE = 'UTC'

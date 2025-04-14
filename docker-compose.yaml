@@ -1,0 +1,76 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: db
+    networks:
+      - test
+    ports:
+      - "5433:5432"
+    volumes:
+      - reserv:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+    restart: unless-stopped
+  migrate:
+    build: .
+    container_name: migrations
+    networks:
+      - test
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "9000:8000"
+    volumes:
+      - ./kion:/app/kion
+    depends_on:
+      - db
+    env_file:
+      - .env
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: rabbit
+    networks:
+      - test
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - reserv_rabbit:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_ENABLED_PLUGINS=${RB_ENABLED_PLUGINS}
+      - RABBITMQ_DEFAULT_USER=${RB_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RB_DEFAULT_PASS}
+    restart: unless-stopped
+  redis:
+    image: redis:alpine
+    container_name: redis
+    networks:
+      - test
+    ports:
+      - "6379:6379"
+    volumes:
+      - reserv_redis:/data
+    restart: unless-stopped
+  celery:
+    build: .
+    container_name: celery
+    networks:
+      - test
+    command: celery -A kion worker --loglevel=info
+    volumes:
+      - ./kion:/app/kion
+    depends_on:
+      - rabbitmq
+      - redis
+    restart: unless-stopped
+    env_file:
+      - .env
+volumes:
+  reserv:
+  reserv_rabbit:
+  reserv_redis:
+
+networks:
+  test:
