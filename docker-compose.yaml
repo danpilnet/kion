@@ -34,8 +34,8 @@ services:
     networks:
       - test
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672" #amqp
+      - "15672:15672" #http
     volumes:
       - reserv_rabbit:/var/lib/rabbitmq
     environment:

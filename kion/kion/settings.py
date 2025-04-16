@@ -22,6 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'dedublicate.apps.DedublicateConfig',
+    # framework
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -91,8 +94,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CELERY_BROKER_URL = 'amqp://${RB_DEFAULT_USER}:${RB_DEFAULT_PASS}@rabbitmq:5672//'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-CELERY_BROKER_URL = 'amqp://user:pass@rabbitmq:5672//'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = os.getenv('RB_BROKER')
+CELERY_RESULT_BACKEND = os.getenv('RD_REDIS_BACKEND')
 CELERY_TIMEZONE = 'UTC'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
