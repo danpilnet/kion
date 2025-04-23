@@ -22,7 +22,3 @@
 4. Активируем виртуальное окружение venv/Scripts/activate
 5. Устанавливаем зависимости из req.txt, команда pip install -r req.txt
 6. Запускаем Docker, команда docker compose up --build
-
----
-
-# На данном этапе, проект не доработан до конца.
