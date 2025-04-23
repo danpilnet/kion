@@ -1,4 +1,5 @@
 import os
+import redis
 
 from pathlib import Path
 
@@ -99,3 +100,13 @@ CELERY_RESULT_BACKEND = os.getenv('RD_REDIS_BACKEND')
 CELERY_TIMEZONE = 'UTC'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+        }
+    }
+}
